@@ -1,10 +1,13 @@
-name: Build Android APK
+name: Build Android
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -13,19 +16,20 @@ jobs:
 
     steps:
 
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 24
+          node-version: 22
+          cache: npm
 
       - name: Install Dependencies
         run: npm install
 
-      - name: Build Web
-        run: npm run build
+      - name: Build Mobile Web Assets
+        run: npm run build:mobile
 
       - name: Sync Capacitor
         run: npx cap sync android
@@ -36,14 +40,27 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Grant Gradle Permission
+        run: chmod +x android/gradlew
+
       - name: Build Debug APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Build Release AAB
+        working-directory: android
+        run: ./gradlew bundleRelease
+        continue-on-error: true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Mesakareen-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload AAB
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mesakareen-AAB
+          path: android/app/build/outputs/bundle/release/*.aab
