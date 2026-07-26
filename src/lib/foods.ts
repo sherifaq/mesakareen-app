@@ -8,7 +8,9 @@ import type { Food } from "./nutrition";
  * device is idle so the very first keystroke already has data in memory.
  */
 async function fetchFoods(): Promise<Food[]> {
-  const response = await fetch("/data/foods.json", { cache: "force-cache" });
+  const response = await fetch("./data/foods.json", {
+  cache: "force-cache",
+});
   if (!response.ok) {
     throw new Error("تعذر تحميل قاعدة بيانات الأطعمة");
   }
