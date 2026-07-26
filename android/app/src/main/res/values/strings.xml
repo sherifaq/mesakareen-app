@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Mesakareen</string>
+    <string name="title_activity_main">Mesakareen</string>
+    <string name="package_name">com.sherifaq.mesakareen</string>
+    <string name="custom_url_scheme">com.sherifaq.mesakareen</string>
+</resources>
